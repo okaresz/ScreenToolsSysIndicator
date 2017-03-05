@@ -1,0 +1,15 @@
+[Indicator Service]
+Name=indicator-@SHORT_NAME@
+ObjectPath=@DBUS_PATH@
+
+[desktop]
+ObjectPath=@DBUS_PATH@/desktop
+
+@GREETLOCKCOMMENT@[desktop_greeter]
+@GREETLOCKCOMMENT@ObjectPath=@DBUS_PATH@/greeter
+
+@GREETLOCKCOMMENT@[desktop_lockscreen]
+@GREETLOCKCOMMENT@ObjectPath=@DBUS_PATH@/greeter
+
+#[ubiquity]
+#ObjectPath=@DBUS_PATH@/ubiquity

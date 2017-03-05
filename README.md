@@ -1,10 +1,10 @@
-# mysystemindicator or SystemIndicatorTest
+ScreenToolsSysIndicator
+======================================
 
-A system indicator test/demo for Ubuntu Unity desktop (It is NOT an AppIndicator). It could be showed on Unity panel in regular user session, lock screen, greeter screen and even on uniquity screen (Ubuntu installer). In similar way as the other Ubuntu/Canonical system indicators, example indicator-sound...etc
+A system indicator for Ubuntu Unity desktop to control screen brightness and orientation.
+The code is based on  [sneetsher's "mysystemindicator"](https://github.com/sneetsher/mysystemindicator).
 
-This something I was looking for it quiet some time, if you are looking to read a long story check here: [How to develop a System Indicator for Unity?](https://askubuntu.com/questions/690769/how-to-develop-a-system-indicator-for-unity)
-
-Mean part of the code took from `libindicator` source code (exactly: `tests/indicator-test-service.c`)
+I use this indicator as a standalone application, so I don't need the unity indicator registration. This also means that the indicator will only be visible on the desktop (not the greeter or the lock screen).
 
 ## Installation
 
@@ -12,31 +12,28 @@ Steps to build & test
 
     mkdir build
     cd build
-    camke -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
     make
     sudo make install
 
-To check quickly in greeter screen you need to reboot or restart lightdm
+Run by starting the installed executable.
 
-    sudo service lightdm restart
+## Notes, TODO
 
-## Notes
+Why GLib C - the hardest way possible? Appindicators would be an easy solution: there is a [python API](http://python-gtk-3-tutorial.readthedocs.io/en/latest/), there are [tutorials](http://candidtim.github.io/appindicator/2014/09/13/ubuntu-appindicator-step-by-step.html), and [example indicators](https://code.launchpad.net/~caffeine-developers/caffeine/main). But appIndicators (with libappindicator) [can only use simple label menu items](http://askubuntu.com/a/16432), and I need a slider to control brightness.
 
-- Exit does not work as expected because dbus respawn it. In greeter, it makes lightdm/X crash. It seems, lightdm does not expect remove of a system indicator.
+So I stayed with C and bare GLib (no need for more, sneetsher only uses GTK+ API to display the about dialog - I don't need that...). One could try of course [gtkmm](https://developer.gnome.org/glibmm/stable/), the C++ wrapper lib for GLib.
 
-    Better, to keep it this way as others may fall in the same pit.
+The brightness slider should be updated when brightness is changed with keys, or other input. A fair solution would be to check current brightness every time the indicator menu is opened and update the slider. BUT! If the correspondent GAction has a state-change handler set in actionEntries[]  (and it has, since I need it to get slider value changes), I cannot update the slider by explicitly setting the state with g_action_change_state(). But if state-change handler is NULL, g_action_change_state() works, the slider position can be updated, but now we cannot get state-change callbacks.
+It seems the unity indicator framework decides "widget read/write direction" based on wheter there is an explicit state-change handler?....
+I tried to understand the default sound indicator source, as it has this exaact same situation with the volume slider, but to no avail. Nor could I figure out what "x-canonical-sync-action" is for.
+So the solution is to read the current brightness upon application start, set it as default state, so the slider is initialized to the correct position. As the indicator will be only started when the laptop is in tablet mode, there is no other way to set the brightness anyway; only with this indicator. Hah!
 
-- System indicator has an advantage of loading dynamically generated icon through g_menu (over AppIndicator that suports only static file loading)
+## Resources, docs used
 
-## Screenshots
-
-- Regular user session
-
-    ![Demo: regular user session](/screenshot/Screenshot from 2016-04-01 15-14-44 Regular User Session.png)
-
-- Lock screen
-
-    ![Demo: lock screen](/screenshot/Screenshot from 2016-04-01 15-15-07 Lock Screen 1.png)
-    ![Demo: lock screen - mouse over](/screenshot/Screenshot from 2016-04-01 15-15-41 Lock Screen 2.png)
-    
-- Greeter or Login screen
+- sneetsher's summary on askubuntu: http://askubuntu.com/a/752750
+- https://unity.ubuntu.com/projects/system-indicators/
+- https://wiki.ubuntu.com/SystemComponents
+- the source of the default [ubuntu sound indicator](https://launchpad.net/ubuntu/+source/indicator-sound/12.10.2+16.04.20160502.1-0ubuntu1) 
+- GLib C docs: https://developer.gnome.org/glib/stable/
+- GVariant format string syntax: https://people.gnome.org/~ryanl/glib-docs/gvariant-format-strings.html

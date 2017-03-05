@@ -4,3 +4,4 @@
 #define SHORT_NAME "@SHORT_NAME@"
 #define DBUS_NAME "@DBUS_NAME@"
 #define DBUS_PATH "@DBUS_PATH@"
+#cmakedefine01 DISPLAY_ON_GREETER_AND_LOCK
