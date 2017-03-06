@@ -52,7 +52,7 @@ target_link_libraries (indicator-${SHORT_NAME}-service ${GIO2_LIBRARIES})
 install (TARGETS indicator-${SHORT_NAME}-service DESTINATION ${CMAKE_INSTALL_BINDIR})
 install (DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data/ DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons
           FILES_MATCHING PATTERN "*.svg"  PATTERN "*.png")
-#install (FILES ${PROJECT_BINARY_DIR}/data/${DBUS_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/unity/indicators)
+install (FILES ${PROJECT_BINARY_DIR}/data/${DBUS_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/unity/indicators)
 #install (FILES ${PROJECT_BINARY_DIR}/data/${DBUS_NAME}.service DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)
 
 #if(DEFINED DISPLAY_ON_GREETER_AND_LOCK)

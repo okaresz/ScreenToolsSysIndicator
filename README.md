@@ -6,11 +6,13 @@ A system indicator for Ubuntu Unity desktop to control screen brightness and ori
 ![screentools-indicator-screenshot](https://github.com/okaresz/ScreenToolsSysIndicator/blob/master/screenshot.jpg)
 
 The code is based on  [sneetsher's "mysystemindicator"](https://github.com/sneetsher/mysystemindicator).
-I use this indicator as a standalone application, so I don't need the unity indicator registration. This also means that the indicator will only be visible on the desktop (not the greeter or the lock screen).
+I use this indicator as a standalone application, so I don't need the unity dbus indicator service config file (indicatorDbusServiceDef), installation is commented out in CMakeLists.
 
 
 Installation
 ---------------------------------
+
+Dependencies: libglib2.0-dev
 
 Steps to build & test
 
@@ -20,6 +22,7 @@ Steps to build & test
     make
     sudo make install
 
+Log out and back in or run `sudo service lightdm restart` (required for unity to parse indicator definition file and display indicator icon if it is registered on DBus).
 Run by starting the installed executable.
 
 
